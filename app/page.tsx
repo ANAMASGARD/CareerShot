@@ -13,7 +13,7 @@ export default function Home() {
 
   // Framer Motion variants for Hero section - Fixed to prevent initial hiding
   const heroVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 1 }, // Changed to 1 so text is always visible
     visible: {
       opacity: 1,
       transition: {
@@ -25,7 +25,7 @@ export default function Home() {
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 }, // Reduced movement and ensured opacity starts from 0
+    hidden: { y: 0, opacity: 1 }, // Changed to ensure text is always visible
     visible: {
       y: 0,
       opacity: 1,
@@ -46,7 +46,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16 lg:h-20">
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 1, x: 0 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
                 className="flex items-center"
@@ -62,14 +62,14 @@ export default function Home() {
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 1, x: 0 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="flex items-center space-x-4"
               >
                 {/* Theme Toggle */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  initial={{ opacity: 1, scale: 1 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                 >
@@ -107,7 +107,7 @@ export default function Home() {
         {/* Hero Content */}
         <motion.div
           variants={heroVariants}
-          initial="hidden"
+          initial="visible"
           animate="visible"
           className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
         >
@@ -194,7 +194,7 @@ export default function Home() {
 
         {/* Scroll Indicator */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.5, duration: 0.8 }}
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2"

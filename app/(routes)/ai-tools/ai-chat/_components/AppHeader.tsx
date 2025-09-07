@@ -2,7 +2,7 @@ import { UserButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import path from 'path'
 import React from 'react'
-import { ThemeToggle } from '@/components/ThemeToggle'
+
 
 const menuOptions=[{
      id:1,
@@ -27,7 +27,7 @@ function AppHeader() {
     <div
       className="
         flex items-center justify-between
-        px-6 py-4 md:px-10 lg:px-14
+        px-6 py-4 md:px-5 lg:px-14
         bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl
         shadow-lg hover:shadow-xl dark:hover:shadow-slate-700/50 transition-shadow
         backdrop-blur-sm
@@ -42,7 +42,7 @@ function AppHeader() {
           ))}    
           </div>
        <div className='flex items-center gap-4'>
-         <ThemeToggle />
+         
          <UserButton />
        </div>
     </div>

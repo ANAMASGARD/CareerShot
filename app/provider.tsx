@@ -24,9 +24,10 @@ function Provider({
     return (
         <ThemeProvider 
             attribute="class" 
-            defaultTheme="light" 
+            defaultTheme="system" 
             enableSystem={true}
             disableTransitionOnChange={false}
+            storageKey="careershot-theme"
         >
             {children}
         </ThemeProvider>
