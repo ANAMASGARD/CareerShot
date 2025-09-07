@@ -6,6 +6,31 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Custom animations for enhanced homepage */
+@layer utilities {
+  .bg-size-200 {
+    background-size: 200% 200%;
+  }
+  
+  /* Navbar scroll effect */
+  [data-navbar].scrolled {
+    @apply bg-white/95 dark:bg-slate-900/95 shadow-lg backdrop-blur-xl;
+  }
+  
+  [data-navbar].scrolled nav {
+    @apply py-2;
+  }
+  
+  /* Reduced motion fallbacks */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

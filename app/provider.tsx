@@ -3,6 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react'
+import { ThemeProvider } from 'next-themes'
 
 
 function Provider({
@@ -21,9 +22,14 @@ function Provider({
     }
 
     return (
-        <div>
+        <ThemeProvider 
+            attribute="class" 
+            defaultTheme="light" 
+            enableSystem={true}
+            disableTransitionOnChange={false}
+        >
             {children}
-        </div>
+        </ThemeProvider>
     )
 }
 
