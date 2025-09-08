@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button'; // Assuming this is your button component
-import { IconArrowRight } from '@tabler/icons-react'; // Step 2: Import the icon
+import { ArrowRightCircleIcon} from 'lucide-react';
 
 type counselorAgent = {
   id: number;
@@ -32,7 +32,7 @@ function CounselorAgentCard({ counselorAgent }: props) {
         {counselorAgent.description} {/* Added dynamic description */}
       </p>
       <Button className="w-full mt-3">
-        + Start a Consultation <IconArrowRight /> {/* Step 3: Use the imported icon */}
+        + Start a Consultation <ArrowRightCircleIcon /> {/* Step 3: Use the imported icon */}
       </Button>
     </div>
   );

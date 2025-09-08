@@ -1,5 +1,6 @@
 import React from 'react'
 import HistoryList from './_components/HistoryList'
+import AddNewSessionDialog from './_components/AddNewSessionDialog'
 import { Button } from '@/components/ui/button'
 import CounselorAgentList from './_components/CounselorAgentList'
 
@@ -10,7 +11,7 @@ function Dashboard() {
         <h2 className='font-bold text-2xl text-gray-900 dark:text-white'>
           My Dashboard
         </h2>
-        <Button> + Consult With Counselor </Button>
+       <AddNewSessionDialog />
       </div>
     <HistoryList />
      <CounselorAgentList />
