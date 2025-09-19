@@ -18,7 +18,25 @@ function Provider({
     }, [user]);
 
     const createNewUser = async () => {
-        const result = await axios.post('/api/user');
+        try {
+            // Only attempt to create user if we have a valid user object with email
+            if (!user?.primaryEmailAddress?.emailAddress) {
+                console.log('User not ready yet or missing email');
+                return;
+            }
+
+            const result = await axios.post('/api/user', {
+                name: user.fullName || user.firstName || '',
+                email: user.primaryEmailAddress.emailAddress
+            });
+            
+            console.log('User created/found:', result.data);
+        } catch (error: any) {
+            console.error('Error creating user:', error.response?.data || error.message);
+            
+            // Don't throw error - just log it so app continues to work
+            // The user experience shouldn't be broken if user creation fails
+        }
     }
 
     return (

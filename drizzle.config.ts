@@ -1,8 +1,11 @@
-require('dotenv/config');
-const { defineConfig } = require('drizzle-kit');
+import 'dotenv/config';
+// drizzle-kit doesn't export `defineConfig` here; export a plain config object instead
 
-module.exports = defineConfig({
-  schema: './configs/schema.ts',
+export default {
+  out: './drizzle',
+  schema: './configs/schema.tsx',
   dialect: 'postgresql',
-  // DB credentials will be configured for GCP
-});
+  dbCredentials: {
+    url: process.env.DATABASE_URL!,
+  },
+} as const;

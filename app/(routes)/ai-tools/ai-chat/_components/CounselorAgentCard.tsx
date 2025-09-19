@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button'; // Assuming this is your button component
 import { ArrowRightCircleIcon} from 'lucide-react';
 
-type counselorAgent = {
+export type counselorAgent = {
   id: number;
   specialist: string;
   description: string;

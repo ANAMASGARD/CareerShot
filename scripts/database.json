@@ -1,0 +1,51 @@
+{
+  "name": "CareerShot Database Config",
+  "version": "1.0.0",
+  "description": "Database configuration and scripts for CareerShot",
+  "drizzle": {
+    "config": {
+      "out": "./drizzle",
+      "schema": "./configs/schema.ts",
+      "dialect": "postgresql",
+      "dbCredentials": {
+        "url": "process.env.DATABASE_URL"
+      }
+    },
+    "commands": {
+      "generate": "npx drizzle-kit generate",
+      "migrate": "npx drizzle-kit migrate",
+      "push": "npx drizzle-kit push",
+      "studio": "npx drizzle-kit studio"
+    },
+    "scripts": {
+      "db:generate": "npx drizzle-kit generate",
+      "db:migrate": "npx drizzle-kit migrate",
+      "db:push": "npx drizzle-kit push",
+      "db:studio": "npx drizzle-kit studio",
+      "db:check": "node scripts/database.js check"
+    }
+  },
+  "environment": {
+    "DATABASE_URL": "your_neon_database_url_here"
+  },
+  "instructions": {
+    "setup": [
+      "1. Set your DATABASE_URL in .env.local",
+      "2. Run: npm run db:push (for existing database)",
+      "3. Or run: npm run db:generate && npm run db:migrate (for new database)",
+      "4. Run: npm run db:studio (to view database)"
+    ],
+    "working_commands": {
+      "generate": "✅ npx drizzle-kit generate",
+      "migrate": "✅ npx drizzle-kit migrate",
+      "push": "✅ npx drizzle-kit push",
+      "studio": "✅ npx drizzle-kit studio"
+    },
+    "troubleshooting": {
+      "command_not_found": "Update drizzle-kit: npm install drizzle-kit@latest --save-dev",
+      "connection_error": "Check DATABASE_URL in .env.local",
+      "schema_error": "Verify configs/schema.ts exists and is valid",
+      "migration_conflict": "Use 'push' instead of 'migrate' for existing databases"
+    }
+  }
+}

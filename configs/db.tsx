@@ -1,2 +1,5 @@
-// Database configuration will be set up for GCP
-// export const db = // Will be configured for GCP database
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+
+const sql = postgres(process.env.DATABASE_URL!, { max: 1 });
+export const db = drizzle(sql);
