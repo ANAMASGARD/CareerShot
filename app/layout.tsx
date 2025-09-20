@@ -5,6 +5,7 @@ import {
   ClerkProvider,
 } from '@clerk/nextjs'
 import Provider from "./provider";
+import { Toaster } from "@/components/ui/sonner";
 
 
 
@@ -34,6 +35,7 @@ export default function RootLayout({
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <Provider>
             {children}
+            <Toaster />
           </Provider>
         </body>
       </html>

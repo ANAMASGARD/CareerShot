@@ -16,6 +16,8 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 // @ts-ignore: optional dependency may not have types or be installed locally
 import Vapi from '@vapi-ai/web';
+import { useRouter } from 'next/navigation'; 
+import { toast } from 'sonner';
 
 
 type SessionDetails = {
@@ -46,6 +48,7 @@ function CounselorVoiceAgent() {
   const [liveTranscript, setLiveTranscript] = useState<string>('');
   const [messages, setMessages] = useState<messages[]>([]);
   const [loading, setLoading] = useState(false);  
+  const  router=useRouter();
 
 
   const [isConnected, setIsConnected] = useState(false);
@@ -176,8 +179,9 @@ function CounselorVoiceAgent() {
       setCallStarted(false);
       setVapiInstance(null);
       const result = await GenerateReport();
+      toast.success('Call ended and report generated successfully!');
+      router.replace('/ai-tools/ai-chat');
 
-      setLoading(false);
     }
   };
 
