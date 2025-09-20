@@ -39,6 +39,7 @@ function CounselorVoiceAgent() {
   const { sessionId } = useParams();
   const [sessionDetails, setSessionDetails] = useState<SessionDetails | null>(null);
   const [callStarted, setCallStarted] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [vapiInstance, setVapiInstance] = useState<any>(null);
   const [currentRole, setCurrentRole] = useState<string | null>(null);
   const [liveTranscript, setLiveTranscript] = useState<string>('');
@@ -60,13 +61,13 @@ function CounselorVoiceAgent() {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (isConnected) {
+    if (callStarted) {
       interval = setInterval(() => {
         setCallDuration(prev => prev + 1);
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isConnected]);
+  }, [callStarted]);
 
   const GetSessionDetails = async () => {
     try {
@@ -81,14 +82,20 @@ function CounselorVoiceAgent() {
   }
 
   const StartCall=()=>{
+      setIsConnecting(true);
       const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY!);
       setVapiInstance(vapi);
      vapi.start(process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID!);
      vapi.on('call-start', () => {console.log('Call started')
       setCallStarted(true);
+      setIsConnected(true);
+      setIsConnecting(false);
+      setCallDuration(0);
      });
       vapi.on('call-end', () => {
   setCallStarted(false);
+  setIsConnected(false);
+  setIsConnecting(false);
   console.log('Call ended');
 });
 
@@ -107,7 +114,7 @@ function CounselorVoiceAgent() {
   }
   }
 });
-    vapiInstance.on('speech-start', () => {
+    vapi.on('speech-start', () => {
 
       console.log('Assistant started speaking');
 
@@ -115,7 +122,7 @@ function CounselorVoiceAgent() {
 
     });
 
-    vapiInstance.on('speech-end', () => {
+    vapi.on('speech-end', () => {
 
       console.log('Assistant stopped speaking');
 
@@ -124,6 +131,17 @@ function CounselorVoiceAgent() {
     });
 
   }
+
+  // Function to get status text and color
+  const getConnectionStatus = () => {
+    if (isConnecting) {
+      return { text: 'Connecting...', color: 'text-yellow-600 dark:text-yellow-400' };
+    } else if (callStarted && isConnected) {
+      return { text: 'Connected', color: 'text-green-600 dark:text-green-400' };
+    } else {
+      return { text: 'Not Connected', color: 'text-red-600 dark:text-red-400' };
+    }
+  };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -147,12 +165,9 @@ function CounselorVoiceAgent() {
     const endCall = () => {
     if (vapiInstance) {
       vapiInstance.stop();
-
-      vapiInstance.off('call-start');
-      vapiInstance.off('call-end');
-      vapiInstance.off('message');
-
       setCallStarted(false);
+      setIsConnected(false);
+      setIsConnecting(false);
       setVapiInstance(null);
     }
   };
@@ -162,9 +177,11 @@ function CounselorVoiceAgent() {
       <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-8 min-h-[600px] flex flex-col">
         {/* Header with Status */}
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-            <Circle className="h-4 w-4" />
-            <span className="text-sm"> {callStarted ? 'Connected' : 'Not Connected'}</span>
+          <div className="flex items-center gap-2">
+            <Circle className={`h-4 w-4 ${getConnectionStatus().color}`} />
+            <span className={`text-sm font-medium ${getConnectionStatus().color}`}>
+              {getConnectionStatus().text}
+            </span>
           </div>
           <div className="text-2xl font-mono text-gray-600 dark:text-gray-300">
             {formatTime(callDuration)}
@@ -177,7 +194,7 @@ function CounselorVoiceAgent() {
           <div className="relative">
             <Image 
               src={sessionDetails?.selectedCounselor?.image || '/advisor1.png'} 
-              alt={sessionDetails?.selectedCounselor?.specialist} 
+              alt={sessionDetails?.selectedCounselor?.specialist || 'Career Counselor'} 
               width={120} 
               height={120} 
               className="h-[120px] w-[120px] rounded-full object-cover border-4 border-white shadow-lg"
@@ -214,19 +231,26 @@ function CounselorVoiceAgent() {
 
           {/* Start Call Button */}
           <div className="mt-8">
-            {!callStarted ? ( 
+            {!callStarted && !isConnecting ? ( 
               <Button 
                 onClick={StartCall}
-                className="bg-gray-800 hover:bg-gray-900 text-white px-8 py-3 rounded-lg flex items-center gap-2 text-sm font-medium"
+                className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors"
               >
                 <Phone className="h-4 w-4" />
                 Start Call
               </Button>
+            ) : isConnecting ? (
+              <Button 
+                disabled
+                className="bg-yellow-600 text-white px-8 py-3 rounded-lg flex items-center gap-2 text-sm font-medium cursor-not-allowed"
+              >
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                Connecting...
+              </Button>
             ) : (
               <Button 
                 onClick={endCall}
-                variant="destructive"
-                className="px-8 py-3 rounded-lg flex items-center gap-2 text-sm font-medium"
+                className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors"
               >
                 <Phone className="h-4 w-4" />
                 End Call
