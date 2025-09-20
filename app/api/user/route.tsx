@@ -3,6 +3,8 @@ import { eq } from "drizzle-orm";
 import { db } from "@/configs/db";
 import { sessionChatTable, usersTable } from "@/configs/schema";
 import { currentUser } from "@clerk/nextjs/server";
+import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 export async function POST(req: NextRequest) {
     try {
@@ -67,19 +69,25 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const sessionId = searchParams.get('sessionId');
 
-        if (!sessionId) {
-            return NextResponse.json(
-                { error: "sessionId query parameter is required" },
-                { status: 400 }
-            );
-        }
+        if (sessionId ==  'all') {
+             const result = await db
+            .select()
+            .from(sessionChatTable)
+            .where(eq(sessionChatTable.createdBy, user?.primaryEmailAddress?.emailAddress));
 
-        const result = await db
+            return NextResponse.json(result[0]);
+           
+        }
+        else {
+            const result = await db
             .select()
             .from(sessionChatTable)
             .where(eq(sessionChatTable.sessionId, sessionId));
 
-        return NextResponse.json(result);
+            return NextResponse.json(result[0]);
+        }
+
+       return NextResponse.json({ error: "Session not found" }, { status: 404 });
     } catch (e: any) {
         console.error('❌ GET /api/user error:', e);
         return NextResponse.json(

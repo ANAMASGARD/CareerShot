@@ -64,8 +64,8 @@ function AddNewSessionDialog() {
 
     setLoading(true);
     try {
-      // Save ALL info to database
-      const result = await axios.post('/api/user/session', {
+      // Save ALL info to database using the suggested API
+      const result = await axios.post('/api/ai/counselor/suggested', {
         note: note,
         counselorId: selectedCounselor.id,
         counselorName: selectedCounselor.specialist,
@@ -77,8 +77,11 @@ function AddNewSessionDialog() {
       
       if (result.data.sessionId) {
         console.log('Redirect to session:', result.data.sessionId);
-        // Redirect to the Conversation Page
+        // Close the dialog and redirect to the Conversation Page
+        resetDialog();
         router.push('/ai-tools/ai-chat/counselor-agent/' + result.data.sessionId);
+      } else {
+        alert('Session created but no session ID returned');
       }
     } catch (error) {
       console.error('Error creating session:', error);

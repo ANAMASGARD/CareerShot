@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 
-type SessionDetails = {
+export type SessionDetails = {
   id: number,
   notes: string,
   sessionId: string,
@@ -76,7 +76,7 @@ function CounselorVoiceAgent() {
 
   const GetSessionDetails = async () => {
     try {
-      const result = await axios.get('/api/user?sessionId=' + sessionId);
+      const result = await axios.get('/api/user/session?sessionId=' + sessionId);
       console.log(result.data);
       // Handle both array and single object responses
       const sessionData = Array.isArray(result.data) ? result.data[0] : result.data;

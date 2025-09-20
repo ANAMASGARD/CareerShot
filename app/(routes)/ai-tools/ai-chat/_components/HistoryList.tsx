@@ -1,13 +1,33 @@
 "use client"
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
+import axios from 'axios';
 import AddNewSessionDialog from './AddNewSessionDialog';
+import HistoryTable from './HistoryTable';
+import { SessionDetails } from '../counselor-agent/[sessionId]/page';
 
-function HistoryList() {
 
-    const [historyList, setHistoryList] = useState([]);
+
+function HistoryList( ) {
+
+    const [historyList, setHistoryList] = useState<SessionDetails[]>([]);
+
+    useEffect(() => {
+        GetHistoryList();
+    }, []);
+
+    const  GetHistoryList=async()=>{
+      try {
+        const result= await axios.get('/api/user/session?sessionId=all');
+        console.log('History List:', result.data);
+        setHistoryList(result.data || []);
+      } catch (error) {
+        console.error('Error fetching history:', error);
+        setHistoryList([]);
+      }
+    };
   return (
     <div className='mt-3'>
         {historyList.length === 0 ? 
@@ -19,7 +39,9 @@ function HistoryList() {
             <p className='text-gray-600 dark:text-gray-300 text-center'>Consult with our AI-powered counselor to get personalized career advice and guidance.</p>
             <AddNewSessionDialog />
         </div> :
-        <div> List </div>}
+        <div> 
+           <HistoryTable historyList={historyList} />
+           </div>}
     </div>
   )
 }
