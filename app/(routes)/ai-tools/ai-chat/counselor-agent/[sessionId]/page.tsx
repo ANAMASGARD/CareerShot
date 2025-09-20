@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 // @ts-ignore: optional dependency may not have types or be installed locally
 import Vapi from '@vapi-ai/web';
 
+
 type SessionDetails = {
   id: number,
   notes: string,
@@ -44,6 +45,7 @@ function CounselorVoiceAgent() {
   const [currentRole, setCurrentRole] = useState<string | null>(null);
   const [liveTranscript, setLiveTranscript] = useState<string>('');
   const [messages, setMessages] = useState<messages[]>([]);
+  const [loading, setLoading] = useState(false);  
 
 
   const [isConnected, setIsConnected] = useState(false);
@@ -162,15 +164,35 @@ function CounselorVoiceAgent() {
     );
   }
 
-    const endCall = () => {
+    const endCall = async () => {
+      setLoading(true);
     if (vapiInstance) {
+      
       vapiInstance.stop();
       setCallStarted(false);
       setIsConnected(false);
       setIsConnecting(false);
       setVapiInstance(null);
+      setCallStarted(false);
+      setVapiInstance(null);
+      const result = await GenerateReport();
+
+      setLoading(false);
     }
   };
+
+  const GenerateReport = async () => {
+    const result = await axios.post('/api/career-report', { 
+      messages: messages, 
+      sessionDetails: sessionDetails,
+      sessionId: sessionId,
+      counselorName: sessionDetails?.selectedCounselor?.specialist, 
+      notes: sessionDetails?.notes, 
+      userName: sessionDetails?.createdBy
+     })
+     console.log(result.data);
+     return result.data;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6">

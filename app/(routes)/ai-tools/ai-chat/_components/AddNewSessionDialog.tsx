@@ -14,12 +14,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowRightCircleIcon, ArrowLeftCircleIcon } from 'lucide-react'
+import { ArrowRightCircleIcon, ArrowLeftCircleIcon, ArrowDownToDotIcon, Plus } from 'lucide-react'
 import CounselorAgentCard,{ counselorAgent } from './CounselorAgentCard'
 import CounselorAgentList from './CounselorAgentList'
 import SuggestedCounselorCard from './SuggestedCounselorCard'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+
+import { MessageCirclePlusIcon } from 'lucide-react'
 
 function AddNewSessionDialog() {
   const [step, setStep] = useState(1); // 1 for note, 2 for counselor selection
@@ -96,7 +98,10 @@ function AddNewSessionDialog() {
   return (
     <Dialog onOpenChange={(open) => !open && resetDialog()}>
       <DialogTrigger asChild>
-        <Button className='mt-3'> + Start a Consultation </Button>
+        <Button className='mt-3'>
+          <MessageCirclePlusIcon className="w-4 h-4 mr-2" />
+          Start a Consultation
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
