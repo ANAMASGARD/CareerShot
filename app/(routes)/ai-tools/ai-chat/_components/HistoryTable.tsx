@@ -11,6 +11,7 @@ import {
 import { SessionDetails } from '../counselor-agent/[sessionId]/page'
 import { Button } from '@/components/ui/button'
 import moment from 'moment';
+import ViewReportDialog from './ViewReportDialog';
 type Props={
   historyList:SessionDetails[]
 }
@@ -42,14 +43,7 @@ function HistoryTable({ historyList }: Props) {
           {moment(record.createdOn).fromNow()}
         </TableCell>
         <TableCell className="text-right">
-          <Button
-            variant={'ghost'}
-            size={'sm'}
-            onClick={() => window.location.href = `/ai-tools/ai-chat/counselor-agent/${record.sessionId}`}
-            className="text-blue-600 hover:text-blue-800 underline"
-          >
-            View Report
-          </Button>
+          <ViewReportDialog record={record} />
         </TableCell>
       </TableRow>
     ))}
