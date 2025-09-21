@@ -48,9 +48,12 @@ Thumbs.db
 # Google Cloud files
 google-cloud-sdk
 careerShot-*.json
-careerShot-*.json
 
 # Misc
 *.log
 .vercel
 .clerk
+
+# Explicitly include package files (override any exclusions)
+!package.json
+!package-lock.json
