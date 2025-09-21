@@ -32,6 +32,7 @@
 .env.production.local
 .env.production
 env-variables-for-gcp.txt
+set-env-vars.sh
 
 # debug
 npm-debug.log*
