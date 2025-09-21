@@ -91,18 +91,7 @@ function CounselorVoiceAgent() {
       setIsConnecting(true);
       const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY!);
       setVapiInstance(vapi);
-      
-      // Try using the assistant ID directly
-      const assistantId = process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID;
-      console.log('Starting call with assistant ID:', assistantId);
-      
-      try {
-        vapi.start(assistantId);
-      } catch (error) {
-        console.error('Error starting VAPI call:', error);
-        setIsConnecting(false);
-        alert('Failed to start voice call. Please check your VAPI configuration.');
-      }
+     vapi.start(process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID!);
      vapi.on('call-start', () => {console.log('Call started')
       setCallStarted(true);
       setIsConnected(true);
