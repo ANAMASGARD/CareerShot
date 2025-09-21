@@ -89,9 +89,30 @@ function CounselorVoiceAgent() {
 
   const StartCall=()=>{
       setIsConnecting(true);
-      const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY!);
+      
+      // Debug logging for environment variables
+      console.log('VAPI API Key:', process.env.NEXT_PUBLIC_VAPI_API_KEY);
+      console.log('VAPI Assistant ID:', process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID);
+      
+      // Check if environment variables are available
+      if (!process.env.NEXT_PUBLIC_VAPI_API_KEY) {
+        console.error('VAPI API Key is missing');
+        setIsConnecting(false);
+        return;
+      }
+      
+      if (!process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID) {
+        console.error('VAPI Assistant ID is missing');
+        setIsConnecting(false);
+        return;
+      }
+      
+      const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY);
       setVapiInstance(vapi);
-     vapi.start(process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID!);
+      
+      // Start the call with the assistant ID
+      vapi.start(process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID);
+      
      vapi.on('call-start', () => {console.log('Call started')
       setCallStarted(true);
       setIsConnected(true);
