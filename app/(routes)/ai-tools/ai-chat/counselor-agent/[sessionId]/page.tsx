@@ -25,6 +25,7 @@ export type SessionDetails = {
   notes: string,
   sessionId: string,
   report: JSON,
+  conversation?: any[], // Add conversation field
   selectedCounselor: counselorAgent,
   createdOn: string,
   createdBy: string,

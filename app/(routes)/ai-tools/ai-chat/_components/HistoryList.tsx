@@ -28,6 +28,11 @@ function HistoryList( ) {
         setHistoryList([]);
       }
     };
+
+    const handleDeleteSession = (sessionId: string) => {
+      // Remove the deleted session from the local state
+      setHistoryList(prevList => prevList.filter(session => session.sessionId !== sessionId));
+    };
   return (
     <div className='mt-3'>
         {historyList.length === 0 ? 
@@ -40,7 +45,7 @@ function HistoryList( ) {
             <AddNewSessionDialog />
         </div> :
         <div> 
-           <HistoryTable historyList={historyList} />
+           <HistoryTable historyList={historyList} onDeleteSession={handleDeleteSession} />
            </div>}
     </div>
   )
