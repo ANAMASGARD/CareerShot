@@ -47,7 +47,7 @@ Thumbs.db
 
 # Google Cloud files
 google-cloud-sdk
-*.json
+careerShot-*.json
 careerShot-*.json
 
 # Misc

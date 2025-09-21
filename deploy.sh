@@ -28,21 +28,12 @@ gcloud services enable containerregistry.googleapis.com
 echo "🐳 Configuring Docker authentication..."
 gcloud auth configure-docker
 
-# Build the Docker image
-echo "🔨 Building Docker image..."
-docker build -t $IMAGE_NAME:latest .
+# Build using Google Cloud Build (more reliable)
+echo "🔨 Building image using Google Cloud Build..."
+gcloud builds submit --tag $IMAGE_NAME:latest
 
 if [ $? -ne 0 ]; then
-    echo "❌ Docker build failed!"
-    exit 1
-fi
-
-# Push the image to Google Container Registry
-echo "📤 Pushing image to Google Container Registry..."
-docker push $IMAGE_NAME:latest
-
-if [ $? -ne 0 ]; then
-    echo "❌ Docker push failed!"
+    echo "❌ Cloud Build failed!"
     exit 1
 fi
 
@@ -57,7 +48,7 @@ gcloud run deploy $SERVICE_NAME \
   --memory 2Gi \
   --cpu 1 \
   --max-instances 10 \
-  --set-env-vars "NODE_ENV=production,NEXT_TELEMETRY_DISABLED=1"
+  --set-env-vars "NODE_ENV=production,NEXT_TELEMETRY_DISABLED=1,NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YWRhcHRpbmctbWlubm93LTYuY2xlcmsuYWNjb3VudHMuZGV2JA,NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in,NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/,NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up,NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/"
 
 if [ $? -eq 0 ]; then
     echo ""

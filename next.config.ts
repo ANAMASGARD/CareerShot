@@ -15,9 +15,7 @@ const nextConfig: NextConfig = {
   },
   
   // For Google Cloud Run
-  experimental: {
-    serverComponentsExternalPackages: ['@google-cloud/vertexai', '@google/generative-ai']
-  }
+  serverExternalPackages: ['@google-cloud/vertexai', '@google/generative-ai']
 };
 
 export default nextConfig;
