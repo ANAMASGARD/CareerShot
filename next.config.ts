@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Enable standalone output for Docker
+  output: 'standalone',
+  
   images: {
     remotePatterns: [
       {
@@ -10,6 +13,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  
+  // For Google Cloud Run
+  experimental: {
+    serverComponentsExternalPackages: ['@google-cloud/vertexai', '@google/generative-ai']
+  }
 };
 
 export default nextConfig;

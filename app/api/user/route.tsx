@@ -66,19 +66,28 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
+        const user = await currentUser();
+        
+        if (!user || !user.primaryEmailAddress?.emailAddress) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
         const { searchParams } = new URL(req.url);
         const sessionId = searchParams.get('sessionId');
 
-        if (sessionId ==  'all') {
+        if (sessionId === 'all') {
              const result = await db
             .select()
             .from(sessionChatTable)
-            .where(eq(sessionChatTable.createdBy, user?.primaryEmailAddress?.emailAddress));
+            .where(eq(sessionChatTable.createdBy, user.primaryEmailAddress.emailAddress));
 
-            return NextResponse.json(result[0]);
+            return NextResponse.json(result);
            
         }
-        else {
+        else if (sessionId) {
             const result = await db
             .select()
             .from(sessionChatTable)
