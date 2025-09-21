@@ -90,28 +90,34 @@ function CounselorVoiceAgent() {
   const StartCall=()=>{
       setIsConnecting(true);
       
-      // Debug logging for environment variables
-      console.log('VAPI API Key:', process.env.NEXT_PUBLIC_VAPI_API_KEY);
-      console.log('VAPI Assistant ID:', process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID);
+      // VAPI configuration with fallback values
+      const VAPI_API_KEY = process.env.NEXT_PUBLIC_VAPI_API_KEY || '4337efb2-eee9-4016-aeb4-82f1a14badbe';
+      const VAPI_ASSISTANT_ID = process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID || 'd166a410-9596-4a2f-9abd-a945cb5f59fb';
       
-      // Check if environment variables are available
-      if (!process.env.NEXT_PUBLIC_VAPI_API_KEY) {
+      // Debug logging for environment variables
+      console.log('VAPI API Key:', VAPI_API_KEY);
+      console.log('VAPI Assistant ID:', VAPI_ASSISTANT_ID);
+      console.log('Env VAPI API Key:', process.env.NEXT_PUBLIC_VAPI_API_KEY);
+      console.log('Env VAPI Assistant ID:', process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID);
+      
+      // Check if we have the required values
+      if (!VAPI_API_KEY) {
         console.error('VAPI API Key is missing');
         setIsConnecting(false);
         return;
       }
       
-      if (!process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID) {
+      if (!VAPI_ASSISTANT_ID) {
         console.error('VAPI Assistant ID is missing');
         setIsConnecting(false);
         return;
       }
       
-      const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY);
+      const vapi = new Vapi(VAPI_API_KEY);
       setVapiInstance(vapi);
       
       // Start the call with the assistant ID
-      vapi.start(process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID);
+      vapi.start(VAPI_ASSISTANT_ID);
       
      vapi.on('call-start', () => {console.log('Call started')
       setCallStarted(true);
