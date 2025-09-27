@@ -1,65 +1,75 @@
-# Use Node.js 18 Alpine as base image
-FROM node:18-alpine AS base
+# Create a new stage named 'deps' based on the 'base' stage
+FROM node:18-alpine AS deps
 
-# Install dependencies only when needed
-FROM base AS deps
+# Install libc6-compat to ensure compatibility with Alpine Linux
 RUN apk add --no-cache libc6-compat
+
+# Set the working directory to /app
 WORKDIR /app
 
-# Install dependencies
+# Copy package.json and package-lock.json (if exists) to the working directory
 COPY package.json package-lock.json* ./
+
+# Install dependencies using npm ci (clean install)
 RUN npm ci
 
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Copy all files from the current directory to the working directory
 COPY . .
 
-# Set environment variables for build
+# Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
+
+# Set NODE_ENV to production for build
 ENV NODE_ENV=production
-# Add public Clerk keys needed for build
+
+# Add public environment variables needed for build
 ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YWRhcHRpbmctbWlubm93LTYuY2xlcmsuYWNjb3VudHMuZGV2JA
 ENV NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 ENV NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
 ENV NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 ENV NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
-# Add VAPI keys needed for build
-ENV NEXT_PUBLIC_VAPI_API_KEY=4337efb2-eee9-4016-aeb4-82f1a14badbe
-ENV NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID=d166a410-9596-4a2f-9abd-a945cb5f59fb
+ENV NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID=9e30f943-c27d-4370-9058-69dbc1a8de76
+ENV NEXT_PUBLIC_VAPI_API_KEY=3e73cb53-d2ee-477f-928e-09415b859fd8
 
-# Build the application
+# Build the Next.js application
 RUN npm run build
 
-# Production image, copy all the files and run next
-FROM base AS runner
+# Create a new stage named 'runner' based on the 'base' stage
+FROM node:18-alpine AS runner
+
+# Set the working directory to /app
 WORKDIR /app
 
+# Set NODE_ENV to production
 ENV NODE_ENV=production
+
+# Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create a non-root user
+# Create a system group named 'nodejs' with GID 1001
 RUN addgroup --system --gid 1001 nodejs
+
+# Create a system user named 'nextjs' with UID 1001
 RUN adduser --system --uid 1001 nextjs
 
-# Copy the built application
-COPY --from=builder /app/public ./public
+# Copy the public directory from the 'builder' stage
+COPY --from=deps /app/public ./public
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+# Copy the .next directory from the 'builder' stage and set ownership to nextjs:nodejs
+COPY --from=deps --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=deps --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Copy package.json from the 'builder' stage
+COPY --from=deps /app/package.json ./package.json
 
+# Switch to the 'nextjs' user
 USER nextjs
 
+# Expose port 3000
 EXPOSE 3000
 
+# Set the PORT environment variable to 3000
 ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
 
-# Start the application
+# Set the default command to start the Next.js application
 CMD ["node", "server.js"]

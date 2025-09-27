@@ -1,12 +1,12 @@
 "use client"
 
-import { SessionsClient } from '@google-cloud/dialogflow-cx';
-// For using generative models like Gemini directly
-import { VertexAI } from '@google-cloud/vertexai';
-// For converting audio to text
-import { SpeechClient } from '@google-cloud/speech';
-// For converting text to audio
-import { TextToSpeechClient } from '@google-cloud/text-to-speech';
+// import { SessionsClient } from '@google-cloud/dialogflow-cx';
+// // For using generative models like Gemini directly
+// import { VertexAI } from '@google-cloud/vertexai';
+// // For converting audio to text
+// import { SpeechClient } from '@google-cloud/speech';
+// // For converting text to audio
+// import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 import axios from 'axios';
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -116,8 +116,25 @@ function CounselorVoiceAgent() {
       const vapi = new Vapi(VAPI_API_KEY);
       setVapiInstance(vapi);
       
-      // Start the call with the assistant ID
-      vapi.start(VAPI_ASSISTANT_ID);
+      // Add error handling before starting the call
+      vapi.on('error', (error) => {
+        console.error('VAPI Error:', error);
+        setIsConnecting(false);
+        setIsConnected(false);
+        setCallStarted(false);
+        // Optional: Show user-friendly error message
+        alert('Failed to connect. Please check your internet connection and try again.');
+      });
+      
+      // Start the call with the assistant ID with try-catch
+      try {
+        vapi.start(VAPI_ASSISTANT_ID);
+      } catch (error) {
+        console.error('Failed to start VAPI call:', error);
+        setIsConnecting(false);
+        alert('Failed to start call. Please try again.');
+        return;
+      }
       
      vapi.on('call-start', () => {console.log('Call started')
       setCallStarted(true);

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AICounselorAgents } from '@/shared/list';
-import { VertexAI } from '@google-cloud/vertexai';
+// import { VertexAI } from '@google-cloud/vertexai';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { db } from "@/configs/db";
 import { sessionChatTable } from "@/configs/schema";
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Otherwise, get AI suggestions
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         const prompt = `You are an expert career guidance AI. Analyze the user's query and recommend exactly 3 AI counselors from the provided list.
 
