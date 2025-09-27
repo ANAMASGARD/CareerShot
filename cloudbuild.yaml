@@ -40,7 +40,6 @@ steps:
     - '--concurrency=80'
     - '--execution-environment=gen2'
     - '--service-account=987917562718-compute@developer.gserviceaccount.com'
-    - '--set-env-vars=NODE_ENV=production,NEXT_TELEMETRY_DISABLED=1,PORT=3000'
     timeout: 900s
 
 # Substitutions for flexibility
@@ -55,7 +54,3 @@ options:
   machineType: 'E2_HIGHCPU_8'
   disk_size_gb: 100
   substitution_option: ALLOW_LOOSE
-
-# Available for public access
-availableSecrets:
-  secretManager: []

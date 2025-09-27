@@ -22,7 +22,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Set NODE_ENV to production for build
 ENV NODE_ENV=production
 
-# Add public environment variables needed for build
+# Add ONLY public environment variables needed for build
 ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YWRhcHRpbmctbWlubm93LTYuY2xlcmsuYWNjb3VudHMuZGV2JA
 ENV NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 ENV NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
@@ -65,7 +65,7 @@ COPY --from=deps /app/package.json ./package.json
 # Switch to the 'nextjs' user
 USER nextjs
 
-# Expose port dynamically (Cloud Run will set PORT environment variable)
+# Expose port 3000
 EXPOSE 3000
 
 # Set the default PORT environment variable (Cloud Run can override this)

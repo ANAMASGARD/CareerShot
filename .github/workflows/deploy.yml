@@ -25,11 +25,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Authenticate to Google Cloud (Workload Identity)
+    - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
+        credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         project_id: ${{ env.PROJECT_ID }}
-        service_account: 987917562718-compute@developer.gserviceaccount.com
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
@@ -42,7 +42,7 @@ jobs:
     - name: Build and submit to Cloud Build
       run: |
         gcloud builds submit --config cloudbuild.yaml \
-          --substitutions=COMMIT_SHA=${GITHUB_SHA} \
+          --substitutions=COMMIT_SHA=${GITHUB_SHA},_SERVICE_NAME=${SERVICE_NAME},_REGION=${REGION} \
           --project=${{ env.PROJECT_ID }}
 
     - name: Get Cloud Run URL
