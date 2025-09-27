@@ -33,6 +33,10 @@
 .env.production
 env-variables-for-gcp.txt
 set-env-vars.sh
+set-env-vars-real*.sh
+**/secrets/
+**/*-secrets.*
+**/*-credentials.*
 
 # debug
 npm-debug.log*
