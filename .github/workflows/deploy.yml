@@ -25,13 +25,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Authenticate to Google Cloud
+    - name: Authenticate to Google Cloud (Workload Identity)
       uses: google-github-actions/auth@v2
       with:
-        credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        project_id: ${{ env.PROJECT_ID }}
+        service_account: 987917562718-compute@developer.gserviceaccount.com
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ env.PROJECT_ID }}
 
     - name: Configure Docker to use gcloud as credential helper
       run: gcloud auth configure-docker
@@ -39,9 +42,11 @@ jobs:
     - name: Build and submit to Cloud Build
       run: |
         gcloud builds submit --config cloudbuild.yaml \
-          --substitutions=COMMIT_SHA=${GITHUB_SHA}
+          --substitutions=COMMIT_SHA=${GITHUB_SHA} \
+          --project=${{ env.PROJECT_ID }}
 
     - name: Get Cloud Run URL
       run: |
-        URL=$(gcloud run services describe $SERVICE_NAME --region=$REGION --format="value(status.url)")
-        echo "Service deployed to: $URL"
+        URL=$(gcloud run services describe $SERVICE_NAME --region=$REGION --project=$PROJECT_ID --format="value(status.url)")
+        echo "🚀 Service deployed to: $URL"
+        echo "✅ Your hackathon URL is ready!"

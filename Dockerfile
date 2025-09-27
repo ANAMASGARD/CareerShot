@@ -65,11 +65,12 @@ COPY --from=deps /app/package.json ./package.json
 # Switch to the 'nextjs' user
 USER nextjs
 
-# Expose port 3000
+# Expose port dynamically (Cloud Run will set PORT environment variable)
 EXPOSE 3000
 
-# Set the PORT environment variable to 3000
+# Set the default PORT environment variable (Cloud Run can override this)
 ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # Set the default command to start the Next.js application
 CMD ["node", "server.js"]
