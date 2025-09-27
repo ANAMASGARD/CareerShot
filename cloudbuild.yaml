@@ -36,10 +36,11 @@ steps:
     - '--cpu=2'
     - '--timeout=900'
     - '--max-instances=10'
-    - '--min-instances=0'
+    - '--min-instances=1'
     - '--concurrency=80'
     - '--execution-environment=gen2'
     - '--service-account=987917562718-compute@developer.gserviceaccount.com'
+    - '--cpu-boost'
     timeout: 900s
 
 # Substitutions for flexibility

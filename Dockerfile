@@ -13,6 +13,17 @@ COPY package.json package-lock.json* ./
 # Install dependencies using npm ci (clean install)
 RUN npm ci
 
+# Build stage
+FROM node:18-alpine AS builder
+
+# Install libc6-compat
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Copy node_modules from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
 # Copy all files from the current directory to the working directory
 COPY . .
 
@@ -53,14 +64,18 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy the public directory from the 'builder' stage
-COPY --from=deps /app/public ./public
+COPY --from=builder /app/public ./public
 
 # Copy the .next directory from the 'builder' stage and set ownership to nextjs:nodejs
-COPY --from=deps --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=deps --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Copy package.json from the 'builder' stage
-COPY --from=deps /app/package.json ./package.json
+COPY --from=builder /app/package.json ./package.json
+
+# Copy startup script
+COPY startup.sh ./startup.sh
+RUN chmod +x ./startup.sh
 
 # Switch to the 'nextjs' user
 USER nextjs
@@ -72,5 +87,11 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Set the default command to start the Next.js application
-CMD ["node", "server.js"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (res) => { \
+    process.exit(res.statusCode === 200 ? 0 : 1) \
+  }).on('error', () => process.exit(1))"
+
+# Set the default command to use our startup script
+CMD ["sh", "./startup.sh"]

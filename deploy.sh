@@ -37,7 +37,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Deploy to Cloud Run
+# Deploy to Cloud Run with improved health checks and startup settings
 echo "🚀 Deploying to Cloud Run..."
 gcloud run deploy $SERVICE_NAME \
   --image $IMAGE_NAME:latest \
@@ -46,8 +46,13 @@ gcloud run deploy $SERVICE_NAME \
   --allow-unauthenticated \
   --port 3000 \
   --memory 2Gi \
-  --cpu 1 \
+  --cpu 2 \
   --max-instances 10 \
+  --min-instances 1 \
+  --concurrency 80 \
+  --timeout 900 \
+  --execution-environment gen2 \
+  --cpu-boost \
   --set-env-vars "NODE_ENV=production,NEXT_TELEMETRY_DISABLED=1,NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YWRhcHRpbmctbWlubm93LTYuY2xlcmsuYWNjb3VudHMuZGV2JA,NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in,NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/,NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up,NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/"
 
 if [ $? -eq 0 ]; then
